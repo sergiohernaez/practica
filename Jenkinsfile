@@ -25,6 +25,7 @@ pipeline {
                 steps {
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                         bat '''
+                                pip install pytest
                                 set PYTHONPATH=%WORKSPACE%
                                 pytest --junitxml=result-unit.xml test\\unit
                         '''
