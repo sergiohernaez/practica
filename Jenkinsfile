@@ -36,7 +36,7 @@ pipeline {
             stage('Rest') {
                 steps {
                     bat '''
-                        set FLASK_APP=app\\api.py
+                        set FLASK_APP=app\\app.py
                         set FLASK_ENV=development
                         start flask run
                         start java -jar C:\\Unir\\Ejercicios\\wiremock\\wiremock-jre8-standalone-2.28.0.jar --port 9090 --root-dir test\\wiremock

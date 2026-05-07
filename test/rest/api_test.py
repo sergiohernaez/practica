@@ -1,5 +1,4 @@
 import http.client
-import os
 import unittest
 from urllib.request import urlopen
 
