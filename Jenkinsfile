@@ -33,7 +33,7 @@ pipeline {
                 }
             }
             
-            /*stage('Rest') {
+            stage('Rest') {
                 steps {
                     bat '''
                         set FLASK_APP=app\\api.py
@@ -44,7 +44,7 @@ pipeline {
                         pytest --junitxml=result-rest.xml test\\rest
                     '''
                 }    
-            }    */
+            }
         }
     }
     
