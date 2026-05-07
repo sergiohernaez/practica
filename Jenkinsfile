@@ -22,7 +22,7 @@ pipeline {
         parallel {
 
             stage('Unit') {
-                agent(label 'agent1')
+                agent{label 'agent1'}
                 steps {
                     sleep time: 1000, unit: 'MILLISECONDS'
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
@@ -36,7 +36,7 @@ pipeline {
             }
             
             stage('Rest') {
-            agent(label 'agent1')
+            agent{label 'agent1'}
                 steps {
                     bat '''
                         set FLASK_APP=app\\app.py
