@@ -24,7 +24,6 @@ pipeline {
             stage('Unit') {
                 agent{label 'agent1'}
                 steps {
-                    sleep time: 1000, unit: 'MILLISECONDS'
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                         bat '''
                                 pip install pytest
@@ -37,7 +36,7 @@ pipeline {
             
             stage('Rest') {
             agent{label 'agent1'}
-                steps {
+                steps {sleep time: 3000, unit: 'MILLISECONDS'
                     bat '''
                         set FLASK_APP=app\\app.py
                         set FLASK_ENV=development
