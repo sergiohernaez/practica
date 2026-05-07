@@ -31,6 +31,7 @@ pipeline {
                                 pytest --junitxml=result-unit.xml test\\unit
                         '''
                     }
+                    stash name:'result-unit', includes:'result-unit.xml'
                 }
             }
             
@@ -45,6 +46,7 @@ pipeline {
                         set PYTHONPATH=%WORKSPACE%
                         pytest --junitxml=result-rest.xml test\\rest
                     '''
+                    stash name:'result-rest', includes:'result-rest.xml'
                 }    
             }
         }
@@ -52,6 +54,8 @@ pipeline {
     
     stage ('Results') {
         steps {
+            unstash name: 'result-rest'
+            unstash name: 'result-unit'
             junit 'result*.xml'
         }
     }
