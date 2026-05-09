@@ -53,7 +53,7 @@ pipeline {
 
             stage('Coverage') {
                 steps {
-                    //cobertura coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '100,0,80', lineCoverageTargets: '100,0,90'
+                    recordCoverage qualityGates: [[integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'MODULE']], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']]
                 }
             }
         }
