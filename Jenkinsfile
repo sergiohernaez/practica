@@ -26,8 +26,7 @@ pipeline {
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                         bat '''
                             set PYTHONPATH=%WORKSPACE%
-                            coverage run --branch --source=app --omit=app\\__init__.py,app\\app.py -m pytest --junitxml=result-unit.xml test\\unit
-                            coverage xml
+                            pytest --junitxml=result-unit.xml test\\unit
                         '''
                     }
                     stash name:'result-unit', includes:'result-unit.xml'
@@ -53,6 +52,13 @@ pipeline {
 
             stage('Coverage') {
                 steps {
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                        bat '''
+                             coverage run --branch --source=app --omit=app\\__init__.py,app\\app.py -m pytest --junitxml=result-unit.xml test\\unit
+                             coverage xml
+
+                        '''
+                    }
                     recordCoverage qualityGates: [[integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'MODULE']], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']]
                 }
             }
