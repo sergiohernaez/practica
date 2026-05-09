@@ -62,6 +62,16 @@ pipeline {
                     recordCoverage qualityGates: [[integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'MODULE']], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']]
                 }
             }
+
+
+            stage('Static') {
+                steps {
+                    bat '''
+                        flake8 --exit-zero --format=pylint app >flake8.out
+                    '''
+                    recordIssues qualityGates: [[criticality: 'NOTE', integerThreshold: 10, threshold: 10.0, type: 'TOTAL']], sourceCodeRetention: 'LAST_BUILD', tools: [pyLint(pattern: 'flake8.out')]
+                }
+            }
         }
     }
     
