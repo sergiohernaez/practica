@@ -72,6 +72,16 @@ pipeline {
                     recordIssues qualityGates: [[criticality: 'NOTE', integerThreshold: 10, threshold: 10.0, type: 'TOTAL']], sourceCodeRetention: 'LAST_BUILD', tools: [pyLint(pattern: 'flake8.out')]
                 }
             }
+
+
+            stage('Security') {
+                steps {
+                    bat '''
+                         bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}: {severity}: {test_id}: {msg}"
+                    '''
+                    recordIssues qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]], sourceCodeRetention: 'LAST_BUILD', tools: [pyLint(pattern: 'bandit.out')]
+                }
+            }
         }
     }
     
