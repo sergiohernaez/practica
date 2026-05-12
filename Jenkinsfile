@@ -35,7 +35,7 @@ pipeline {
 
             stage('Rest') {
                 agent{label 'agent2'}
-                steps {sleep time: 3000, unit: 'MILLISECONDS'
+                steps {
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                         bat '''
                             set FLASK_APP=app\\app.py
@@ -51,6 +51,7 @@ pipeline {
             }
 
             stage('Coverage') {
+                agent{label 'agent3'}
                 steps {
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                         bat '''
@@ -65,6 +66,7 @@ pipeline {
 
 
             stage('Static') {
+                agent{label 'agent4'}
                 steps {
                     bat '''
                         flake8 --exit-zero --format=pylint app >flake8.out
@@ -75,6 +77,7 @@ pipeline {
 
 
             stage('Security') {
+                agent{label 'agent5'}
                 steps {
                     bat '''
                          bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}: {severity}: {test_id}: {msg}"
@@ -84,6 +87,7 @@ pipeline {
             }
 
             stage('Performance') {
+                agent{label 'agent6'}
                 steps {
                     bat '''
                         set FLASK_APP=app\\app.py
