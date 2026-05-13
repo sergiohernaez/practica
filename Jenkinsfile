@@ -27,7 +27,7 @@ pipeline {
 
                 stage('Rest') {
                     agent{label 'agent2'}
-                    steps {
+                    steps { sleep time: 1000, unit: 'MILLISECONDS'
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             bat '''
                                 set FLASK_APP=app\\app.py
@@ -78,7 +78,7 @@ pipeline {
 
                 stage('Performance') {
                     agent{label 'agent6'}
-                    steps {
+                    steps { sleep time: 4000, unit: 'MILLISECONDS'
                         bat '''
                             set FLASK_APP=app\\app.py
                             set FLASK_ENV=development
