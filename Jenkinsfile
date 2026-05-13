@@ -88,7 +88,7 @@ pipeline {
                         perfReport sourceDataFiles: 'flask.jtl'
                     }
                 }
-
+            }
         }
      }
 }
