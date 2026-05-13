@@ -77,7 +77,7 @@ pipeline {
                 }
 
                 stage('Performance') {
-                    agent{label 'agent6'}
+                    agent{label 'agent2'}
                     steps { sleep time: 4000, unit: 'MILLISECONDS'
                         bat '''
                             set FLASK_APP=app\\app.py
@@ -88,7 +88,7 @@ pipeline {
                         perfReport sourceDataFiles: 'flask.jtl'
                     }
                 }
-            }
+
         }
      }
 }
