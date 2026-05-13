@@ -18,8 +18,8 @@ pipeline {
                             bat '''
                                 set PYTHONPATH=%WORKSPACE%
                                 coverage run --branch --source=app --omit=app\\__init__.py,app\\app.py -m pytest --junitxml=result-unit.xml test\\unit
-                                pytest --junitxml=result-unit.xml test\\unit
                             '''
+                            junit 'result-unit.xml'
                         }
                         stash name:'result-unit', includes:'result-unit.xml'
                     }
