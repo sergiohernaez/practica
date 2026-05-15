@@ -78,7 +78,7 @@ pipeline {
 
                 stage('Performance') {
                     agent{label 'agent6'}
-                    steps { sleep time: 4000, unit: 'MILLISECONDS'
+                    steps {
                         bat '''
                         C:\\UNIR\\Ejercicios\\apache-jmeter-5.6.3\\bin\\jmeter -n -t test\\jmeter\\flask.jmx -f -l flask.jtl
                         '''
