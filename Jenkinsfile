@@ -20,8 +20,8 @@ pipeline {
                                 coverage run --branch --source=app --omit=app\\__init__.py,app\\app.py -m pytest --junitxml=result-unit.xml test\\unit
                             '''
                             junit 'result-unit.xml'
+                            stash name:'result-unit', includes:'result-unit.xml'
                         }
-                        stash name:'result-unit', includes:'result-unit.xml'
                     }
                 }
 
@@ -46,8 +46,8 @@ pipeline {
                             bat '''
                                  coverage xml
                             '''
+                            recordCoverage qualityGates: [[integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'MODULE']], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']]
                         }
-                        recordCoverage qualityGates: [[integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'MODULE']], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']]
                     }
                 }
 
@@ -55,10 +55,12 @@ pipeline {
                 stage('Static') {
                     agent{label 'agent4'}
                     steps {
-                        bat '''
-                            flake8 --exit-zero --format=pylint app >flake8.out
-                        '''
-                        recordIssues qualityGates: [[criticality: 'NOTE', integerThreshold: 10, threshold: 10.0, type: 'TOTAL']], sourceCodeRetention: 'LAST_BUILD', tools: [pyLint(pattern: 'flake8.out')]
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            bat '''
+                                flake8 --exit-zero --format=pylint app >flake8.out
+                            '''
+                            recordIssues qualityGates: [[criticality: 'NOTE', integerThreshold: 10, threshold: 10.0, type: 'TOTAL']], sourceCodeRetention: 'LAST_BUILD', tools: [pyLint(pattern: 'flake8.out')]
+                        }
                     }
                 }
 
@@ -66,20 +68,24 @@ pipeline {
                 stage('Security') {
                     agent{label 'agent5'}
                     steps {
-                        bat '''
-                             bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}: {severity}: {test_id}: {msg}"
-                        '''
-                        recordIssues qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]], sourceCodeRetention: 'LAST_BUILD', tools: [pyLint(pattern: 'bandit.out')]
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            bat '''
+                                 bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}: {severity}: {test_id}: {msg}"
+                            '''
+                            recordIssues qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]], sourceCodeRetention: 'LAST_BUILD', tools: [pyLint(pattern: 'bandit.out')]
+                        }
                     }
                 }
 
                 stage('Performance') {
                     agent{label 'agent6'}
                     steps {
-                        bat '''
-                        C:\\UNIR\\Ejercicios\\apache-jmeter-5.6.3\\bin\\jmeter -n -t test\\jmeter\\flask.jmx -f -l flask.jtl
-                        '''
-                        perfReport sourceDataFiles: 'flask.jtl'
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            bat '''
+                            C:\\UNIR\\Ejercicios\\apache-jmeter-5.6.3\\bin\\jmeter -n -t test\\jmeter\\flask.jmx -f -l flask.jtl
+                            '''
+                            perfReport sourceDataFiles: 'flask.jtl'
+                        }
                     }
                 }
             }
