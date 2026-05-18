@@ -2,8 +2,8 @@ import http.client
 
 from flask import Flask
 
-from calc import Calculator
-from util import Util
+from app.calc import Calculator
+from app.util import Util
 
 app = Flask(__name__)
 
